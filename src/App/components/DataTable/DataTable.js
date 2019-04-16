@@ -12,6 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import TableHeader from './TableHeader';
 import TableActions from './TableActions';
+import TableFilters from './TableFilters';
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -54,6 +55,7 @@ const styles = theme => ({
 
 class DataTable extends React.Component {
   state = {
+    filtersOpen: false,
     order: 'asc',
     orderBy: 'calories',
     selected: [],
@@ -109,17 +111,45 @@ class DataTable extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
+  handleFiltersState = () => {
+    this.setState(prevState => ({
+      filtersOpen: !prevState.filtersOpen
+    }));
+  };
+
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
-    const { classes, columns, data, selectable, sortable } = this.props;
-    const { order, orderBy, selected, rowsPerPage, page } = this.state;
+    const {
+      classes,
+      columns,
+      data,
+      selectable,
+      sortable,
+      onSelectActions,
+      actions
+    } = this.props;
+    const {
+      filtersOpen,
+      order,
+      orderBy,
+      selected,
+      rowsPerPage,
+      page,
+      filterable
+    } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <Paper className={classes.root}>
-        <TableActions numSelected={selected.length} />
+        <TableActions
+          numSelected={selected.length}
+          filterable={filterable}
+          onSelectActions={onSelectActions}
+          actions={actions}
+          onFilterClick={this.handleFiltersState}
+        />
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <TableHeader
@@ -132,6 +162,11 @@ class DataTable extends React.Component {
               columns={columns}
               selectable={selectable}
               sortable={sortable}
+            />
+            <TableFilters
+              columns={columns}
+              selectable={selectable}
+              open={filtersOpen}
             />
             <TableBody>
               {stableSort(data, getSorting(order, orderBy))

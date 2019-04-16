@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 
@@ -35,7 +34,14 @@ const toolbarStyles = theme => ({
 });
 
 const TableActions = props => {
-  const { numSelected, classes } = props;
+  const {
+    numSelected,
+    classes,
+    onSelectActions,
+    actions,
+    onFilterClick,
+    filterable = true
+  } = props;
 
   return (
     <Toolbar>
@@ -53,17 +59,39 @@ const TableActions = props => {
       <div className={classes.spacer} />
       <div className={classes.actions}>
         {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+          onSelectActions &&
+          onSelectActions.map(selectAction => (
+            <Tooltip title={selectAction.title}>
+              <IconButton
+                aria-label={selectAction.title}
+                onClick={selectAction.onClick}
+              >
+                <selectAction.ActionIcon />
+              </IconButton>
+            </Tooltip>
+          ))
         ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
+          <div style={{ display: 'flex' }}>
+            {filterable && (
+              <Tooltip title={'Filter list'}>
+                <IconButton aria-label={'Filter list'} onClick={onFilterClick}>
+                  <FilterListIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {actions &&
+              actions.map(action => (
+                <Tooltip title={action.title}>
+                  <IconButton
+                    aria-label={action.title}
+                    onClick={action.onClick}
+                  >
+                    <action.ActionIcon />
+                  </IconButton>
+                </Tooltip>
+              ))}
+          </div>
         )}
       </div>
     </Toolbar>
