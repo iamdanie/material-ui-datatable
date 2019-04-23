@@ -16,6 +16,13 @@ const styles = theme => ({
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit * 2,
     width: 150
+  },
+  chips: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  chip: {
+    margin: theme.spacing.unit / 4
   }
 });
 

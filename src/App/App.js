@@ -29,15 +29,16 @@ const columns = [
     id: 'state',
     filterable: true,
     filterType: 'multiple',
+    filterOptions: ['active', 'inactive'],
     sortable: true,
     label: 'State'
   }
 ];
 
 const data = [
-  { id: 1, name: 'Cupcake', calories: 305, state: 'active' },
-  { id: 2, name: 'Donut', calories: 329, state: 'inactive' },
-  { id: 3, name: 'Yogurt', calories: 120, state: 'active' }
+  { id: 'foo', name: 'Cupcake', calories: 305, state: 'active' },
+  { id: 'bar', name: 'Donut', calories: 329, state: 'inactive' },
+  { id: 'baz', name: 'Yogurt', calories: 120, state: 'active' }
 ];
 
 const onSelectActions = [

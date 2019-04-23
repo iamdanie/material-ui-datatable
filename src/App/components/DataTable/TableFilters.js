@@ -4,10 +4,69 @@ import { withStyles } from '@material-ui/core/styles';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
-import { Zoom, TableHead } from '@material-ui/core';
+import {
+  Zoom,
+  TableHead,
+  Select,
+  Input,
+  Chip,
+  MenuItem
+} from '@material-ui/core';
 import styles from './styles';
 
 const TableFilters = ({ columns, selectable, open, classes }) => {
+  const handleFilterTypes = column => {
+    switch (column.filterType) {
+      case 'text':
+        return <TextField className={classes.textFilter} />;
+      case 'number':
+        return (
+          <TextField
+            type="number"
+            className={classes.textFilter}
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
+        );
+      case 'multiple':
+        return (
+          <Select
+            multiple
+            value={[]}
+            input={
+              <Input id="select-multiple-chip" className={classes.textFilter} />
+            }
+            renderValue={selected => (
+              <div className={classes.chips}>
+                {selected.map(value => (
+                  <Chip key={value} label={value} className={classes.chip} />
+                ))}
+              </div>
+            )}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 48 * 4.5 + 8,
+                  width: 250
+                }
+              }
+            }}
+          >
+            <MenuItem value="">None</MenuItem>
+            {column.filterOptions &&
+              column.filterOptions.map((option, index) => (
+                <MenuItem key={index} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+          </Select>
+        );
+      default:
+        return null;
+    }
+  };
+
   if (open) {
     return (
       <Zoom in={open}>
@@ -18,12 +77,12 @@ const TableFilters = ({ columns, selectable, open, classes }) => {
                 <div className={classes.spacer} />
               </TableCell>
             )}
-            {columns.map((row, index) => (
+            {columns.map((column, index) => (
               <TableCell
-                key={row.id}
+                key={column.id}
                 padding={index === 0 && selectable ? 'none' : 'default'}
               >
-                <TextField className={classes.textFilter} />
+                {handleFilterTypes(column)}
               </TableCell>
             ))}
           </TableRow>

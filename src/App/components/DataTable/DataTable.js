@@ -127,6 +127,7 @@ const DataTable = ({
                     )}
                     {columns.map((column, index) => (
                       <TableCell
+                        key={index}
                         align="left"
                         padding={selectable && index === 0 ? 'none' : 'default'}
                       >
