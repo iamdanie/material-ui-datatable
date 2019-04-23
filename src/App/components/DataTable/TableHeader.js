@@ -36,35 +36,28 @@ class TableHeader extends React.Component {
               />
             </TableCell>
           )}
-          {columns.map(
-            row => (
-              <TableCell
-                key={row.id}
-                align={'left'}
-                padding={'none'}
-                sortDirection={orderBy === row.id ? order : false}
-              >
-                {sortable && row.sortable ? (
-                  <Tooltip
-                    title="Sort"
-                    placement={row.numeric ? 'bottom-end' : 'bottom-start'}
-                    enterDelay={300}
+          {columns.map((row, index) => (
+            <TableCell
+              key={row.id}
+              align={'left'}
+              padding={index === 0 && selectable ? 'none' : 'default'}
+              sortDirection={orderBy === row.id ? order : false}
+            >
+              {sortable && row.sortable ? (
+                <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+                  <TableSortLabel
+                    active={orderBy === row.id}
+                    direction={order}
+                    onClick={this.createSortHandler(row.id)}
                   >
-                    <TableSortLabel
-                      active={orderBy === row.id}
-                      direction={order}
-                      onClick={this.createSortHandler(row.id)}
-                    >
-                      {row.label}
-                    </TableSortLabel>
-                  </Tooltip>
-                ) : (
-                  row.label
-                )}
-              </TableCell>
-            ),
-            this
-          )}
+                    {row.label}
+                  </TableSortLabel>
+                </Tooltip>
+              ) : (
+                row.label
+              )}
+            </TableCell>
+          ))}
         </TableRow>
       </TableHead>
     );

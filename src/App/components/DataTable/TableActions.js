@@ -60,8 +60,8 @@ const TableActions = props => {
       <div className={classes.actions}>
         {numSelected > 0 ? (
           onSelectActions &&
-          onSelectActions.map(selectAction => (
-            <Tooltip title={selectAction.title}>
+          onSelectActions.map((selectAction, index) => (
+            <Tooltip key={index} title={selectAction.title}>
               <IconButton
                 aria-label={selectAction.title}
                 onClick={selectAction.onClick}
@@ -81,8 +81,8 @@ const TableActions = props => {
             )}
 
             {actions &&
-              actions.map(action => (
-                <Tooltip title={action.title}>
+              actions.map((action, index) => (
+                <Tooltip key={index} title={action.title}>
                   <IconButton
                     aria-label={action.title}
                     onClick={action.onClick}

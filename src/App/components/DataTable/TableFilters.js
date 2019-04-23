@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
+import { Zoom, TableHead } from '@material-ui/core';
 
 const filterStyles = theme => ({
   spacer: {
@@ -12,9 +12,8 @@ const filterStyles = theme => ({
   },
   textField: {
     marginTop: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
     marginBottom: theme.spacing.unit * 2,
-    width: 200
+    width: 150
   }
 });
 
@@ -23,26 +22,28 @@ class TableFilters extends React.Component {
     const { columns, selectable, open, classes } = this.props;
     if (open) {
       return (
-        <TableHead>
-          <TableRow>
-            {selectable && (
-              <TableCell padding="checkbox">
-                <div className={classes.spacer} />
-              </TableCell>
-            )}
-            {columns.map(
-              row => (
-                <TableCell key={row.id} align={'left'} padding={'none'}>
-                  <TextField
-                    id="standard-with-placeholder"
-                    className={classes.textField}
-                  />
+        <Zoom in={open}>
+          <TableHead>
+            <TableRow>
+              {selectable && (
+                <TableCell padding="checkbox">
+                  <div className={classes.spacer} />
                 </TableCell>
-              ),
-              this
-            )}
-          </TableRow>
-        </TableHead>
+              )}
+              {columns.map(
+                (row, index) => (
+                  <TableCell
+                    key={row.id}
+                    padding={index === 0 && selectable ? 'none' : 'default'}
+                  >
+                    <TextField className={classes.textField} />
+                  </TableCell>
+                ),
+                this
+              )}
+            </TableRow>
+          </TableHead>
+        </Zoom>
       );
     }
     return null;
@@ -50,12 +51,6 @@ class TableFilters extends React.Component {
 }
 
 TableFilters.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.string.isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
   selectable: PropTypes.bool
 };
 

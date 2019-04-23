@@ -6,10 +6,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-
 import TableHeader from './TableHeader';
 import TableActions from './TableActions';
 import TableFilters from './TableFilters';
@@ -46,7 +44,7 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3
   },
   table: {
-    minWidth: 1020
+    minWidth: 700
   },
   tableWrapper: {
     overflowX: 'auto'
@@ -190,7 +188,7 @@ class DataTable extends React.Component {
                           <Checkbox checked={isSelected} />
                         </TableCell>
                       )}
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell padding={selectable ? 'none' : 'default'}>
                         {n.name}
                       </TableCell>
                       <TableCell align="left">{n.calories}</TableCell>
@@ -209,7 +207,7 @@ class DataTable extends React.Component {
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[3]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}

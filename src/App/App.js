@@ -4,7 +4,11 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 
-const theme = createMuiTheme();
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true
+  }
+});
 
 const columns = [
   {
