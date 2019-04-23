@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,220 +11,157 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TableHeader from './TableHeader';
 import TableActions from './TableActions';
 import TableFilters from './TableFilters';
+import styles from './styles';
+import { stableSort, getSorting } from './utils';
 
-function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
+const DataTable = ({
+  classes,
+  columns,
+  data,
+  selectable,
+  sortable,
+  onSelectActions,
+  actions,
+  filterable
+}) => {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState(columns[0].id);
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(3);
 
-function stableSort(array, cmp) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
+  const handleRequestSort = (event, property) => {
+    let newOrder = 'desc';
 
-function getSorting(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => desc(a, b, orderBy)
-    : (a, b) => -desc(a, b, orderBy);
-}
-
-const styles = theme => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3
-  },
-  table: {
-    minWidth: 700
-  },
-  tableWrapper: {
-    overflowX: 'auto'
-  }
-});
-
-class DataTable extends React.Component {
-  state = {
-    filtersOpen: false,
-    order: 'asc',
-    orderBy: 'calories',
-    selected: [],
-    page: 0,
-    rowsPerPage: 3
-  };
-
-  handleRequestSort = (event, property) => {
-    const orderBy = property;
-    let order = 'desc';
-
-    if (this.state.orderBy === property && this.state.order === 'desc') {
-      order = 'asc';
+    if (orderBy === property && order === 'desc') {
+      newOrder = 'asc';
     }
 
-    this.setState({ order, orderBy });
+    setOrder(newOrder);
+    setOrderBy(property);
   };
 
-  handleSelectAllClick = event => {
+  const handleSelectAllClick = event => {
     if (event.target.checked) {
-      this.setState(state => ({ selected: this.props.data.map(n => n.id) }));
+      setSelected(data.map(n => n.id));
       return;
     }
-    this.setState({ selected: [] });
+    setSelected([]);
   };
 
-  handleClick = (event, id) => {
-    const { selected } = this.state;
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
+  const handleClick = (event, id) => {
+    const newSelected =
+      selected.indexOf(id) === -1
+        ? [...selected, ...[id]]
+        : selected.filter(value => value !== id);
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    this.setState({ selected: newSelected });
+    setSelected(newSelected);
   };
 
-  handleChangePage = (event, page) => {
-    this.setState({ page });
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(event.target.value);
   };
 
-  handleFiltersState = () => {
-    this.setState(prevState => ({
-      filtersOpen: !prevState.filtersOpen
-    }));
+  const handleFiltersState = () => {
+    setFiltersOpen(prevFiltersOpen => !prevFiltersOpen);
   };
 
-  isSelected = id => this.state.selected.indexOf(id) !== -1;
+  const isSelected = id => selected.indexOf(id) !== -1;
 
-  render() {
-    const {
-      classes,
-      columns,
-      data,
-      selectable,
-      sortable,
-      onSelectActions,
-      actions
-    } = this.props;
-    const {
-      filtersOpen,
-      order,
-      orderBy,
-      selected,
-      rowsPerPage,
-      page,
-      filterable
-    } = this.state;
-    const emptyRows =
-      rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
-    return (
-      <Paper className={classes.root}>
-        <TableActions
-          numSelected={selected.length}
-          filterable={filterable}
-          onSelectActions={onSelectActions}
-          actions={actions}
-          onFilterClick={this.handleFiltersState}
-        />
-        <div className={classes.tableWrapper}>
-          <Table className={classes.table} aria-labelledby="tableTitle">
-            <TableHeader
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={this.handleSelectAllClick}
-              onRequestSort={this.handleRequestSort}
-              rowCount={data.length}
-              columns={columns}
-              selectable={selectable}
-              sortable={sortable}
-            />
-            <TableFilters
-              columns={columns}
-              selectable={selectable}
-              open={filtersOpen}
-            />
-            <TableBody>
-              {stableSort(data, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-                  const isSelected = this.isSelected(n.id);
-                  return (
-                    <TableRow
-                      hover
-                      onClick={
-                        selectable && (event => this.handleClick(event, n.id))
-                      }
-                      role="checkbox"
-                      aria-checked={selectable && isSelected}
-                      tabIndex={-1}
-                      key={n.id}
-                      selected={selectable && isSelected}
-                    >
-                      {selectable && (
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={isSelected} />
-                        </TableCell>
-                      )}
-                      <TableCell padding={selectable ? 'none' : 'default'}>
-                        {n.name}
+  return (
+    <Paper className={classes.root}>
+      <TableActions
+        numSelected={selected.length}
+        filterable={filterable}
+        onSelectActions={onSelectActions}
+        actions={actions}
+        onFilterClick={handleFiltersState}
+      />
+      <div className={classes.tableWrapper}>
+        <Table className={classes.table} aria-labelledby="tableTitle">
+          <TableHeader
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={data.length}
+            columns={columns}
+            selectable={selectable}
+            sortable={sortable}
+          />
+          <TableFilters
+            columns={columns}
+            selectable={selectable}
+            open={filtersOpen}
+          />
+          <TableBody>
+            {stableSort(data, getSorting(order, orderBy))
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map(row => {
+                const selected = isSelected(row.id);
+                return (
+                  <TableRow
+                    hover
+                    onClick={
+                      selectable && (event => handleClick(event, row.id))
+                    }
+                    role="checkbox"
+                    aria-checked={selectable && selected}
+                    tabIndex={-1}
+                    key={row.id}
+                    selected={selectable && selected}
+                  >
+                    {selectable && (
+                      <TableCell padding="checkbox">
+                        <Checkbox checked={selected} />
                       </TableCell>
-                      <TableCell align="left">{n.calories}</TableCell>
-                      <TableCell align="left">{n.fat}</TableCell>
-                      <TableCell align="left">{n.carbs}</TableCell>
-                      <TableCell align="left">{n.protein}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <TablePagination
-          rowsPerPageOptions={[3]}
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page'
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page'
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        />
-      </Paper>
-    );
-  }
-}
+                    )}
+                    {columns.map((column, index) => (
+                      <TableCell
+                        align="left"
+                        padding={selectable && index === 0 ? 'none' : 'default'}
+                      >
+                        {row[column.id]}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            {emptyRows > 0 && (
+              <TableRow style={{ height: 49 * emptyRows }}>
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <TablePagination
+        rowsPerPageOptions={[3]}
+        component="div"
+        count={data.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        backIconButtonProps={{
+          'aria-label': 'Previous Page'
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'Next Page'
+        }}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </Paper>
+  );
+};
 
 DataTable.propTypes = {
   classes: PropTypes.object.isRequired,

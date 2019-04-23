@@ -26,32 +26,18 @@ const columns = [
     label: 'Cal (g)'
   },
   {
-    id: 'fat',
+    id: 'state',
     filterable: true,
-    filterType: 'number',
+    filterType: 'multiple',
     sortable: true,
-    label: 'Fat (g)'
-  },
-  {
-    id: 'carbs',
-    filterable: true,
-    filterType: 'number',
-    sortable: true,
-    label: 'Carbs (g)'
-  },
-  {
-    id: 'protein',
-    filterable: true,
-    filterType: 'number',
-    sortable: true,
-    label: 'Protein (g)'
+    label: 'State'
   }
 ];
 
 const data = [
-  { id: 1, name: 'Cupcake', calories: 305, fat: 3.7, carbs: 67, protein: 4.3 },
-  { id: 2, name: 'Donut', calories: 329, fat: 1.7, carbs: 200, protein: 8.83 },
-  { id: 3, name: 'Yogurt', calories: 120, fat: 8.7, carbs: 549, protein: 12.83 }
+  { id: 1, name: 'Cupcake', calories: 305, state: 'active' },
+  { id: 2, name: 'Donut', calories: 329, state: 'inactive' },
+  { id: 3, name: 'Yogurt', calories: 120, state: 'active' }
 ];
 
 const onSelectActions = [
