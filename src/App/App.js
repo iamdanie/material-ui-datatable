@@ -29,7 +29,7 @@ const columns = [
     id: 'state',
     filterable: true,
     filterType: 'multiple',
-    filterOptions: ['active', 'inactive'],
+    filterOptions: ['active', 'inactive', 'idle'],
     sortable: true,
     label: 'State'
   }

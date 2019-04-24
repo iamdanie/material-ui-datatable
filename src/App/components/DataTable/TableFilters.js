@@ -14,15 +14,49 @@ import {
 } from '@material-ui/core';
 import styles from './styles';
 
-const TableFilters = ({ columns, selectable, open, classes }) => {
+const TableFilters = ({
+  columns,
+  selectable,
+  open,
+  filterData,
+  setFilterData,
+  classes
+}) => {
+  const handleFilterChange = column => {
+    return event => {
+      const value = event.target.value;
+      setFilterData(prevData => ({
+        ...prevData,
+        ...{ [column]: value }
+      }));
+    };
+  };
+
+  const handleChipDelete = (column, value) => {
+    return () => {
+      setFilterData(prevData => ({
+        ...prevData,
+        ...{ [column]: prevData[column].filter(item => item !== value) }
+      }));
+    };
+  };
+
   const handleFilterTypes = column => {
     switch (column.filterType) {
       case 'text':
-        return <TextField className={classes.textFilter} />;
+        return (
+          <TextField
+            className={classes.textFilter}
+            value={filterData[column.id]}
+            onChange={handleFilterChange(column.id)}
+          />
+        );
       case 'number':
         return (
           <TextField
             type="number"
+            value={filterData[column.id]}
+            onChange={handleFilterChange(column.id)}
             className={classes.textFilter}
             InputLabelProps={{
               shrink: true
@@ -33,14 +67,20 @@ const TableFilters = ({ columns, selectable, open, classes }) => {
         return (
           <Select
             multiple
-            value={[]}
+            value={filterData[column.id]}
+            onChange={handleFilterChange(column.id)}
             input={
               <Input id="select-multiple-chip" className={classes.textFilter} />
             }
             renderValue={selected => (
               <div className={classes.chips}>
                 {selected.map(value => (
-                  <Chip key={value} label={value} className={classes.chip} />
+                  <Chip
+                    key={value}
+                    label={value}
+                    className={classes.chip}
+                    onDelete={handleChipDelete(column.id, value)}
+                  />
                 ))}
               </div>
             )}

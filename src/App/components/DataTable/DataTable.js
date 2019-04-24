@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -14,15 +14,26 @@ import TableFilters from './TableFilters';
 import styles from './styles';
 import { stableSort, getSorting } from './utils';
 
+const buildFilters = columns => {
+  let filters = {};
+  for (const column of columns) {
+    if (column.filterable) {
+      filters[column.id] = column.filterType === 'multiple' ? [] : '';
+    }
+  }
+
+  return filters;
+};
+
 const DataTable = ({
   classes,
   columns,
   data,
   selectable,
-  sortable,
+  sortable = true,
   onSelectActions,
   actions,
-  filterable
+  filterable = true
 }) => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [order, setOrder] = useState('asc');
@@ -30,6 +41,20 @@ const DataTable = ({
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(3);
+  const [filterData, setFilterData] = useState(buildFilters(columns));
+  const [tableData, setTableData] = useState(data);
+
+  useEffect(() => {
+    setTableData(prevData => stableSort(prevData, getSorting(order, orderBy)));
+  }, [data, order, orderBy, page, rowsPerPage]);
+
+  useEffect(() => {
+    setTableData(prevData => applyFilters(prevData));
+  }, [data, page, rowsPerPage, filterData]);
+
+  const applyFilters = tableData => {
+    return tableData;
+  };
 
   const handleRequestSort = (event, property) => {
     let newOrder = 'desc';
@@ -100,11 +125,13 @@ const DataTable = ({
           />
           <TableFilters
             columns={columns}
+            filterData={filterData}
+            setFilterData={setFilterData}
             selectable={selectable}
             open={filtersOpen}
           />
           <TableBody>
-            {stableSort(data, getSorting(order, orderBy))
+            {tableData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => {
                 const selected = isSelected(row.id);
