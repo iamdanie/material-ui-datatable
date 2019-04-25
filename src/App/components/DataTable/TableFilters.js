@@ -24,19 +24,26 @@ const TableFilters = ({
 }) => {
   const handleFilterChange = column => {
     return event => {
-      const value = event.target.value;
+      const newValue = event.target.value;
       setFilterData(prevData => ({
         ...prevData,
-        ...{ [column]: value }
+        ...{ [column]: { ...prevData[column], ...{ value: newValue } } }
       }));
     };
   };
 
-  const handleChipDelete = (column, value) => {
+  const handleChipDelete = (column, newValue) => {
     return () => {
       setFilterData(prevData => ({
         ...prevData,
-        ...{ [column]: prevData[column].filter(item => item !== value) }
+        ...{
+          [column]: {
+            ...prevData[column],
+            ...{
+              value: prevData[column].value.filter(item => item !== newValue)
+            }
+          }
+        }
       }));
     };
   };
@@ -47,7 +54,7 @@ const TableFilters = ({
         return (
           <TextField
             className={classes.textFilter}
-            value={filterData[column.id]}
+            value={filterData[column.id].value}
             onChange={handleFilterChange(column.id)}
           />
         );
@@ -55,7 +62,7 @@ const TableFilters = ({
         return (
           <TextField
             type="number"
-            value={filterData[column.id]}
+            value={filterData[column.id].value}
             onChange={handleFilterChange(column.id)}
             className={classes.textFilter}
             InputLabelProps={{
@@ -67,7 +74,7 @@ const TableFilters = ({
         return (
           <Select
             multiple
-            value={filterData[column.id]}
+            value={filterData[column.id].value}
             onChange={handleFilterChange(column.id)}
             input={
               <Input id="select-multiple-chip" className={classes.textFilter} />

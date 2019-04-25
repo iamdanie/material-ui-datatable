@@ -24,4 +24,18 @@ const getSorting = (order, orderBy) => {
     : (a, b) => -desc(a, b, orderBy);
 };
 
-export { getSorting, stableSort };
+const buildFilters = columns => {
+  let filters = {};
+  for (const column of columns) {
+    if (column.filterable) {
+      filters[column.id] = {
+        filterType: column.filterType,
+        value: column.filterType === 'multiple' ? [] : ''
+      };
+    }
+  }
+
+  return filters;
+};
+
+export { buildFilters, getSorting, stableSort };

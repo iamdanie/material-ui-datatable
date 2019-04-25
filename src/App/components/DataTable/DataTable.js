@@ -12,18 +12,7 @@ import TableHeader from './TableHeader';
 import TableActions from './TableActions';
 import TableFilters from './TableFilters';
 import styles from './styles';
-import { stableSort, getSorting } from './utils';
-
-const buildFilters = columns => {
-  let filters = {};
-  for (const column of columns) {
-    if (column.filterable) {
-      filters[column.id] = column.filterType === 'multiple' ? [] : '';
-    }
-  }
-
-  return filters;
-};
+import { buildFilters, stableSort, getSorting } from './utils';
 
 const DataTable = ({
   classes,
@@ -40,20 +29,50 @@ const DataTable = ({
   const [orderBy, setOrderBy] = useState(columns[0].id);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(3);
+  const [rowsPerPage, setRowsPerPage] = useState(4);
   const [filterData, setFilterData] = useState(buildFilters(columns));
   const [tableData, setTableData] = useState(data);
 
   useEffect(() => {
-    setTableData(prevData => stableSort(prevData, getSorting(order, orderBy)));
+    if (sortable) {
+      setTableData(prevData =>
+        stableSort(prevData, getSorting(order, orderBy))
+      );
+    }
   }, [data, order, orderBy, page, rowsPerPage]);
 
   useEffect(() => {
-    setTableData(prevData => applyFilters(prevData));
+    if (filterable) {
+      setTableData(applyFilters(data));
+    }
   }, [data, page, rowsPerPage, filterData]);
 
   const applyFilters = tableData => {
-    return tableData;
+    let filteredData = tableData;
+
+    for (const [column, content] of Object.entries(filterData)) {
+      if (content.value && content.value.length) {
+        filteredData = tableData.filter(row =>
+          filterByType(row, column, content)
+        );
+        console.log(column, content.value, filteredData);
+      }
+    }
+
+    return filteredData;
+  };
+
+  const filterByType = (row, columnId, column) => {
+    switch (column.filterType) {
+      case 'text':
+        return row[columnId].toLowerCase().search(column.value) !== -1;
+      case 'number':
+        return row[columnId] === parseFloat(column.value);
+      case 'multiple':
+        return column.value.indexOf(row[columnId]) !== -1;
+      default:
+        return false;
+    }
   };
 
   const handleRequestSort = (event, property) => {

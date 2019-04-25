@@ -28,8 +28,9 @@ const columns = [
   {
     id: 'state',
     filterable: true,
-    filterType: 'multiple',
-    filterOptions: ['active', 'inactive', 'idle'],
+    // filterType: 'multiple',
+    filterType: 'text',
+    // filterOptions: ['active', 'inactive', 'idle'],
     sortable: true,
     label: 'State'
   }
@@ -38,7 +39,8 @@ const columns = [
 const data = [
   { id: 'foo', name: 'Cupcake', calories: 305, state: 'active' },
   { id: 'bar', name: 'Donut', calories: 329, state: 'inactive' },
-  { id: 'baz', name: 'Yogurt', calories: 120, state: 'active' }
+  { id: 'baz', name: 'Yogurt', calories: 120, state: 'active' },
+  { id: 'wee', name: 'Donut', calories: 180, state: 'inactive' }
 ];
 
 const onSelectActions = [
