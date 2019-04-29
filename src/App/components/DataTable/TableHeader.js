@@ -7,71 +7,77 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 
-class TableHeader extends React.Component {
-  createSortHandler = property => event => {
-    this.props.onRequestSort(event, property);
+const TableHeader = ({
+  onSelectAllClick,
+  order,
+  orderBy,
+  numSelected,
+  rowCount,
+  columns,
+  selectable,
+  sortable,
+  onRequestSort
+}) => {
+  const createSortHandler = property => event => {
+    onRequestSort(event, property);
   };
-
-  render() {
-    const {
-      onSelectAllClick,
-      order,
-      orderBy,
-      numSelected,
-      rowCount,
-      columns,
-      selectable,
-      sortable = true
-    } = this.props;
-
-    return (
-      <TableHead>
-        <TableRow>
-          {selectable && (
-            <TableCell padding="checkbox">
-              <Checkbox
-                indeterminate={numSelected > 0 && numSelected < rowCount}
-                checked={numSelected === rowCount}
-                onChange={onSelectAllClick}
-              />
-            </TableCell>
-          )}
-          {columns.map((row, index) => (
-            <TableCell
-              key={row.id}
-              align={'left'}
-              padding={index === 0 && selectable ? 'none' : 'default'}
-              sortDirection={orderBy === row.id ? order : false}
-            >
-              {sortable && row.sortable ? (
-                <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
-                  <TableSortLabel
-                    active={orderBy === row.id}
-                    direction={order}
-                    onClick={this.createSortHandler(row.id)}
-                  >
-                    {row.label}
-                  </TableSortLabel>
-                </Tooltip>
-              ) : (
-                row.label
-              )}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-  }
-}
+  return (
+    <TableHead>
+      <TableRow>
+        {selectable && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={numSelected === rowCount}
+              onChange={onSelectAllClick}
+            />
+          </TableCell>
+        )}
+        {columns.map((row, index) => (
+          <TableCell
+            key={row.id}
+            align={'left'}
+            padding={index === 0 && selectable ? 'none' : 'default'}
+            sortDirection={orderBy === row.id ? order : false}
+          >
+            {sortable && row.sortable ? (
+              <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+                <TableSortLabel
+                  active={orderBy === row.id}
+                  direction={order}
+                  onClick={createSortHandler(row.id)}
+                >
+                  {row.label}
+                </TableSortLabel>
+              </Tooltip>
+            ) : (
+              row.label
+            )}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+};
 
 TableHeader.propTypes = {
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      filterable: PropTypes.bool,
+      filterType: PropTypes.string,
+      sortable: PropTypes.bool
+    })
+  ).isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
-  selectable: PropTypes.bool
+  selectable: PropTypes.bool,
+  sortable: PropTypes.bool
 };
 
 export default TableHeader;

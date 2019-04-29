@@ -28,4 +28,17 @@ const buildFilters = columns => {
   return filters;
 };
 
-export { buildFilters, sortItems };
+const filterByType = (row, columnId, column) => {
+  switch (column.filterType) {
+    case 'text':
+      return row[columnId].toLowerCase().search(column.value) !== -1;
+    case 'number':
+      return row[columnId] === parseFloat(column.value);
+    case 'multiple':
+      return column.value.indexOf(row[columnId]) !== -1;
+    default:
+      return false;
+  }
+};
+
+export { buildFilters, filterByType, sortItems };

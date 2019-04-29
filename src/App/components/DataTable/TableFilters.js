@@ -93,14 +93,10 @@ const TableFilters = ({
             )}
             MenuProps={{
               PaperProps: {
-                style: {
-                  maxHeight: 48 * 4.5 + 8,
-                  width: 250
-                }
+                style: classes.selectFilter
               }
             }}
           >
-            <MenuItem value="">None</MenuItem>
             {column.filterOptions &&
               column.filterOptions.map((option, index) => (
                 <MenuItem key={index} value={option}>
@@ -141,10 +137,20 @@ const TableFilters = ({
 };
 
 TableFilters.propTypes = {
-  selectable: PropTypes.bool,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      filterable: PropTypes.bool,
+      filterType: PropTypes.string,
+      sortable: PropTypes.bool
+    })
+  ).isRequired,
+  classes: PropTypes.object.isRequired,
+  filterData: PropTypes.object,
   open: PropTypes.bool,
-  columns: PropTypes.array.isRequired,
-  classes: PropTypes.object.isRequired
+  selectable: PropTypes.bool,
+  setFilterData: PropTypes.func
 };
 
 export default withStyles(styles)(TableFilters);

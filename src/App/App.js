@@ -39,7 +39,15 @@ const data = [
   { id: 'foo', name: 'Cupcake', calories: 305, state: 'active' },
   { id: 'bar', name: 'Donut', calories: 329, state: 'inactive' },
   { id: 'baz', name: 'Yogurt', calories: 120, state: 'active' },
-  { id: 'wee', name: 'Donut', calories: 180, state: 'inactive' }
+  { id: 'wee', name: 'Donut', calories: 180, state: 'inactive' },
+  { id: 'abc', name: 'Cupcake', calories: 305, state: 'active' },
+  { id: 'def', name: 'Donut', calories: 329, state: 'inactive' },
+  { id: 'ghi', name: 'Yogurt', calories: 120, state: 'active' },
+  { id: 'jkl', name: 'Donut', calories: 180, state: 'inactive' },
+  { id: 'mno', name: 'Cupcake', calories: 305, state: 'active' },
+  { id: 'prq', name: 'Donut', calories: 329, state: 'inactive' },
+  { id: 'stu', name: 'Yogurt', calories: 120, state: 'active' },
+  { id: 'vwx', name: 'Donut', calories: 180, state: 'inactive' }
 ];
 
 const onSelectActions = [
