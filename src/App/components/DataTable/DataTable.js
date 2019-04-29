@@ -12,7 +12,7 @@ import TableHeader from './TableHeader';
 import TableActions from './TableActions';
 import TableFilters from './TableFilters';
 import styles from './styles';
-import { buildFilters, stableSort, getSorting } from './utils';
+import { buildFilters, sortItems } from './utils';
 
 const DataTable = ({
   classes,
@@ -31,15 +31,9 @@ const DataTable = ({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(4);
   const [filterData, setFilterData] = useState(buildFilters(columns));
-  const [tableData, setTableData] = useState(data);
-
-  useEffect(() => {
-    if (sortable) {
-      setTableData(prevData =>
-        stableSort(prevData, getSorting(order, orderBy))
-      );
-    }
-  }, [data, order, orderBy, page, rowsPerPage]);
+  const [tableData, setTableData] = useState(
+    sortable ? sortItems(data, 'asc', columns[0].id) : data
+  );
 
   useEffect(() => {
     if (filterable) {
@@ -48,18 +42,15 @@ const DataTable = ({
   }, [data, page, rowsPerPage, filterData]);
 
   const applyFilters = tableData => {
-    let filteredData = tableData;
-
-    for (const [column, content] of Object.entries(filterData)) {
-      if (content.value && content.value.length) {
-        filteredData = tableData.filter(row =>
-          filterByType(row, column, content)
-        );
-        console.log(column, content.value, filteredData);
+    return tableData.filter(row => {
+      let conditions = [];
+      for (const [column, content] of Object.entries(filterData)) {
+        if (content.value && content.value.length) {
+          conditions.push(filterByType(row, column, content));
+        }
       }
-    }
-
-    return filteredData;
+      return conditions.indexOf(false) === -1;
+    });
   };
 
   const filterByType = (row, columnId, column) => {
@@ -76,14 +67,15 @@ const DataTable = ({
   };
 
   const handleRequestSort = (event, property) => {
-    let newOrder = 'desc';
+    let newOrder = 'asc';
 
-    if (orderBy === property && order === 'desc') {
-      newOrder = 'asc';
+    if (orderBy === property && order === 'asc') {
+      newOrder = 'desc';
     }
 
     setOrder(newOrder);
     setOrderBy(property);
+    setTableData(sortItems(tableData, newOrder, property));
   };
 
   const handleSelectAllClick = event => {
@@ -112,7 +104,12 @@ const DataTable = ({
   };
 
   const handleFiltersState = () => {
-    setFiltersOpen(prevFiltersOpen => !prevFiltersOpen);
+    setFiltersOpen(prevFiltersOpen => {
+      if (prevFiltersOpen) {
+        setFilterData(buildFilters(columns));
+      }
+      return !prevFiltersOpen;
+    });
   };
 
   const isSelected = id => selected.indexOf(id) !== -1;
