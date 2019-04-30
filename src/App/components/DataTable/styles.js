@@ -25,7 +25,7 @@ const styles = theme => ({
     flex: '1 1 100%'
   },
   textFilter: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2,
     width: 150
   },
@@ -50,6 +50,11 @@ const styles = theme => ({
   selectFilter: {
     maxHeight: 224,
     width: 250
+  },
+  dateFilter: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2
   }
 });
 

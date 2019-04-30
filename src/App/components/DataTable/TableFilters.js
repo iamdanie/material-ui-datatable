@@ -32,6 +32,23 @@ const TableFilters = ({
     };
   };
 
+  const handleDateChange = (column, range) => {
+    return event => {
+      const newValue = event.target.value;
+      setFilterData(prevData => ({
+        ...prevData,
+        ...{
+          [column]: {
+            ...prevData[column],
+            ...{
+              value: { ...prevData[column].value, ...{ [range]: newValue } }
+            }
+          }
+        }
+      }));
+    };
+  };
+
   const handleChipDelete = (column, newValue) => {
     return () => {
       setFilterData(prevData => ({
@@ -104,6 +121,35 @@ const TableFilters = ({
                 </MenuItem>
               ))}
           </Select>
+        );
+      case 'date':
+        return (
+          <div>
+            <TextField
+              type="date"
+              id="offset"
+              label="From"
+              name="offset"
+              value={filterData[column.id].value.from}
+              className={classes.dateFilter}
+              onChange={handleDateChange(column.id, 'from')}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+            <TextField
+              type="date"
+              id="offset_to"
+              label="To"
+              name="offset"
+              value={filterData[column.id].value.to}
+              className={classes.dateFilter}
+              onChange={handleDateChange(column.id, 'to')}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </div>
         );
       default:
         return null;

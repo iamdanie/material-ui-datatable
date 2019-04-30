@@ -46,7 +46,10 @@ const DataTable = ({
     return data.filter(row => {
       let conditions = [];
       for (const [column, content] of Object.entries(filterData)) {
-        if (content.value && content.value.length) {
+        if (
+          content.value &&
+          (content.value.length || Object.keys(content.value).length)
+        ) {
           conditions.push(filterByType(row, column, content));
         }
       }

@@ -1,3 +1,15 @@
+import { format } from 'date-fns';
+
+const defaultFilterValues = {
+  text: '',
+  number: '',
+  multiple: [],
+  date: {
+    from: format(new Date('1971-01-01'), 'YYYY-MM-DD'),
+    to: format(new Date(), 'YYYY-MM-DD')
+  }
+};
+
 const desc = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -20,7 +32,7 @@ const buildFilters = columns => {
     if (column.filterable) {
       filters[column.id] = {
         filterType: column.filterType,
-        value: column.filterType === 'multiple' ? [] : ''
+        value: defaultFilterValues[column.filterType]
       };
     }
   }
@@ -36,9 +48,28 @@ const filterByType = (row, columnId, column) => {
       return row[columnId] === parseFloat(column.value);
     case 'multiple':
       return column.value.indexOf(row[columnId]) !== -1;
+    case 'date':
+      return handleDateComparison(
+        row[columnId],
+        column.value.from,
+        column.value.to
+      );
     default:
       return false;
   }
+};
+
+const handleDateComparison = (value, from, to) => {
+  const dateValue = Date.parse(value);
+  const fromDate = Date.parse(from);
+  const toDate = Date.parse(to);
+
+  return (
+    (isNaN(fromDate) && isNaN(toDate)) ||
+    (dateValue >= fromDate && dateValue <= toDate) ||
+    (isNaN(fromDate) && dateValue <= toDate) ||
+    (isNaN(toDate) && dateValue >= fromDate)
+  );
 };
 
 export { buildFilters, filterByType, sortItems };
