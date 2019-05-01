@@ -1,12 +1,10 @@
-import { format } from 'date-fns';
-
 const defaultFilterValues = {
   text: '',
   number: '',
   multiple: [],
   date: {
-    from: format(new Date('1971-01-01'), 'YYYY-MM-DD'),
-    to: format(new Date(), 'YYYY-MM-DD')
+    from: '',
+    to: ''
   }
 };
 
