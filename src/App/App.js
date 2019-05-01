@@ -126,6 +126,76 @@ const data = [
     calories: 180,
     state: 'inactive',
     added: '2012-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: '123',
+    name: 'Yogurt',
+    calories: 120,
+    state: 'active',
+    added: '2000-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: '456',
+    name: 'Donut',
+    calories: 180,
+    state: 'inactive',
+    added: '2000-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: '789',
+    name: 'Cupcake',
+    calories: 305,
+    state: 'active',
+    added: '1999-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: '012',
+    name: 'Donut',
+    calories: 329,
+    state: 'inactive',
+    added: '1992-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: 'yz0',
+    name: 'Yogurt',
+    calories: 120,
+    state: 'active',
+    added: '2019-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: 'baa',
+    name: 'Donut',
+    calories: 180,
+    state: 'inactive',
+    added: '2012-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: 'bee',
+    name: 'Yogurt',
+    calories: 120,
+    state: 'active',
+    added: '2019-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: 'boo',
+    name: 'Donut',
+    calories: 180,
+    state: 'inactive',
+    added: '2012-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: 'bff',
+    name: 'Donut',
+    calories: 180,
+    state: 'inactive',
+    added: '2012-01-01T12:00:00.000+00:00'
+  },
+  {
+    id: 'dee',
+    name: 'Donut',
+    calories: 180,
+    state: 'inactive',
+    added: '2012-01-01T12:00:00.000+00:00'
   }
 ];
 

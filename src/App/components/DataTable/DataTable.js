@@ -91,7 +91,8 @@ const DataTable = ({
   };
 
   const handleChangeRowsPerPage = event => {
-    setRowsPerPage(event.target.value);
+    const value = event.target.value;
+    setRowsPerPage(parseInt(value));
   };
 
   const handleFiltersState = () => {
@@ -135,7 +136,7 @@ const DataTable = ({
             open={filtersOpen}
           />
           <TableBody>
-            {tableData
+            {sortItems(tableData, order, orderBy)
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => {
                 const selected = isSelected(row.id);
@@ -172,7 +173,7 @@ const DataTable = ({
         </Table>
       </div>
       <TablePagination
-        count={data.length}
+        count={tableData.length}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[DEFAULT_ROWS_PER_PAGE, 25, 50, 100]}
         currentPage={page}

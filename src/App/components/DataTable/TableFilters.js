@@ -110,7 +110,10 @@ const TableFilters = ({
             )}
             MenuProps={{
               PaperProps: {
-                style: classes.selectFilter
+                style: {
+                  maxHeight: 224,
+                  width: 250
+                }
               }
             }}
           >
